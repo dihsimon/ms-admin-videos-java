@@ -4,8 +4,9 @@ import com.carmona.admin.catalog.domain.AggregateRoot;
 import com.carmona.admin.catalog.domain.validation.ValidationHandler;
 
 import java.time.Instant;
+import java.util.Objects;
 
-public class Category extends AggregateRoot<CategoryID> {
+public class Category extends AggregateRoot<CategoryID> implements Cloneable {
     private String name;
     private String description;
     private boolean active;
@@ -13,15 +14,22 @@ public class Category extends AggregateRoot<CategoryID> {
     private Instant updatedAt;
     private Instant deletedAt;
 
-    private Category(final CategoryID anId, final String aName, final String aDescription,
-                     final boolean active, final Instant aCreatedAt, final Instant aUpdatedAt, final Instant aDeletedAt) {
+    private Category(
+            final CategoryID anId,
+            final String aName,
+            final String aDescription,
+            final boolean isActive,
+            final Instant aCreationDate,
+            final Instant aUpdateDate,
+            final Instant aDeleteDate
+    ) {
         super(anId);
         this.name = aName;
         this.description = aDescription;
-        this.active = active;
-        this.createdAt = aCreatedAt;
-        this.updatedAt = aUpdatedAt;
-        this.deletedAt = aDeletedAt;
+        this.active = isActive;
+        this.createdAt = Objects.requireNonNull(aCreationDate, "'createdAt' should not be null");
+        this.updatedAt = Objects.requireNonNull(aUpdateDate, "'updatedAt' should not be null");
+        this.deletedAt = aDeleteDate;
     }
 
     public static Category newCategory(final String aName, final String aDescription, final boolean isActive) {
@@ -62,7 +70,6 @@ public class Category extends AggregateRoot<CategoryID> {
                 aCategory.deletedAt
         );
     }
-
 
     @Override
     public void validate(final ValidationHandler handler) {
@@ -128,5 +135,14 @@ public class Category extends AggregateRoot<CategoryID> {
 
     public Instant getDeletedAt() {
         return deletedAt;
+    }
+
+    @Override
+    public Category clone() {
+        try {
+            return (Category) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

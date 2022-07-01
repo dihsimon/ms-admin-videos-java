@@ -10,17 +10,17 @@ public class CategoryValidator extends Validator {
     public static final int NAME_MIN_LENGTH = 3;
     private final Category category;
 
-    public CategoryValidator(final Category category, final ValidationHandler aHandler) {
+    public CategoryValidator(final Category aCategory, final ValidationHandler aHandler) {
         super(aHandler);
-        this.category = category;
+        this.category = aCategory;
     }
 
     @Override
     public void validate() {
-        checkNameConstrainsts();
+        checkNameConstraints();
     }
 
-    private void checkNameConstrainsts() {
+    private void checkNameConstraints() {
         final var name = this.category.getName();
         if (name == null) {
             this.validationHandler().append(new Error("'name' should not be null"));
