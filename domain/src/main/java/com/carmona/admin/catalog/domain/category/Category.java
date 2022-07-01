@@ -31,32 +31,69 @@ public class Category extends AggregateRoot<CategoryID> {
         return new Category(id, aName, aDescription, isActive, now, now, deletedAt);
     }
 
+    public static Category with(
+            final CategoryID anId,
+            final String name,
+            final String description,
+            final boolean active,
+            final Instant createdAt,
+            final Instant updatedAt,
+            final Instant deletedAt
+    ) {
+        return new Category(
+                anId,
+                name,
+                description,
+                active,
+                createdAt,
+                updatedAt,
+                deletedAt
+        );
+    }
+
+    public static Category with(final Category aCategory) {
+        return with(
+                aCategory.getId(),
+                aCategory.name,
+                aCategory.description,
+                aCategory.isActive(),
+                aCategory.createdAt,
+                aCategory.updatedAt,
+                aCategory.deletedAt
+        );
+    }
+
 
     @Override
-    public void validate(final ValidationHandler handler){
+    public void validate(final ValidationHandler handler) {
         new CategoryValidator(this, handler).validate();
     }
 
-    public Category deactivate(){
-        if(getDeletedAt() == null){
-            this.deletedAt = Instant.now();
-        }
-        this.active = false;
-        this.updatedAt = Instant.now();
-        return this;
-    }
-
-    public Category activate(){
+    public Category activate() {
         this.deletedAt = null;
         this.active = true;
         this.updatedAt = Instant.now();
         return this;
     }
 
-    public Category updated(final String aName, final String aDescription, final boolean isActive){
-        if(isActive){
+    public Category deactivate() {
+        if (getDeletedAt() == null) {
+            this.deletedAt = Instant.now();
+        }
+
+        this.active = false;
+        this.updatedAt = Instant.now();
+        return this;
+    }
+
+    public Category update(
+            final String aName,
+            final String aDescription,
+            final boolean isActive
+    ) {
+        if (isActive) {
             activate();
-        }else{
+        } else {
             deactivate();
         }
         this.name = aName;
